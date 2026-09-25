@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiendaGamer - Hardware & PC</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <h1>🎮 TiendaGamer</h1>
+  </header>
+
+  <div class="main-layout">
+    
+    <section>
+      <h2>Catálogo de Productos</h2>
+      <div class="grid-products">
+        {% for producto in productos %}
+        <article class="card">
+          <img src="{{ producto.imagen if producto.imagen else 'https://via.placeholder.com/200' }}" alt="{{ producto.nombre }}">
+          <h3>{{ producto.nombre }}</h3>
+          <p class="category">{{ producto.categoria }}</p>
+          <p class="price">${{ "{:,.0f}".format(producto.precio) }}</p>
+          <p class="stock">Stock disponible: {{ producto.stock }}</p>
+
+          {% if producto.stock > 0 %}
+          <form action="/comprar" method="POST" class="form-buy">
+            <input type="hidden" name="id" value="{{ producto.id }}">
+            <div class="qty-group">
+              <label>Cantidad:</label>
+              <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" required>
+            </div>
+            <button type="submit" class="btn-buy">Comprar</button>
+          </form>
+          {% else %}
+          <button disabled class="btn-disabled">Agotado</button>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Agregar Nuevo Producto</h2>
+      <form action="/publicar" method="POST">
+        <div class="form-group">
+          <label>Nombre del Producto:</label>
+          <input type="text" name="nombre" placeholder="Ej: RTX 4070 Ti" required>
+        </div>
+        <div class="form-group">
+          <label>Categoría:</label>
+          <input type="text" name="categoria" placeholder="Ej: Placa de video" required>
+        </div>
+        <div class="form-group">
+          <label>Precio ($):</label>
+          <input type="number" name="precio" placeholder="Ej: 850000" required>
+        </div>
+        <div class="form-group">
+          <label>Stock:</label>
+          <input type="number" name="stock" placeholder="Ej: 5" required>
+        </div>
+        <div class="form-group">
+          <label>URL Imagen (Opcional):</label>
+          <input type="url" name="imagen" placeholder="https://...">
+        </div>
+        <button type="submit" class="btn-add">Guardar en JSON</button>
+      </form>
+    </aside>
+
+  </div>
+
+</body>
+</html>
